@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/reactivex/rxgo/v2"
@@ -9,7 +10,8 @@ import (
 func main() {
 	//example1()
 	//example2()
-	example3()
+	//example3()
+	example4()
 
 	//ex_with_rx()
 }
@@ -97,5 +99,22 @@ func example3() {
 			break
 		}
 		fmt.Println(fmt.Sprintf("%#v", item))
+	}
+}
+
+func example4() {
+	observable := rxgo.Defer([]rxgo.Producer{
+		func(_ context.Context, ch chan<- rxgo.Item) {
+			for i := 0; i < 3; i++ {
+				ch <- rxgo.Of(i)
+			}
+		},
+	})
+
+	for item := range observable.Observe() {
+		fmt.Println("first", item.V)
+	}
+	for item := range observable.Observe() {
+		fmt.Println("second", item.V)
 	}
 }
